@@ -1,8 +1,39 @@
 #include "ocean_navigation.hpp"
 
 std::vector<int> OceanNavigation::FindSafestPath(unsigned int starting_row) {
-  // TODO
-  return {};
+  if (starting_row >= rows_) {
+    throw std::runtime_error("Starting row is out of bounds.");
+  }
+
+  std::vector<int> path;
+  unsigned int current_row = starting_row;
+  path.push_back(current_row);
+
+  for (unsigned int col = 0; col < cols_ - 1; col++) {
+    unsigned int next_row = current_row;
+    int best_value = ocean_[current_row][col + 1];
+
+    // top option //
+    if (current_row > 0) {
+      int top_value = ocean_[current_row - 1][col + 1];
+      if (top_value > best_value) {
+        best_value = top_value;
+        next_row = current_row - 1;
+      }
+    }
+
+    // bottom option //
+    if (current_row < rows_ - 1) {
+      int bottom_value = ocean_[current_row + 1][col + 1];
+      if (bottom_value > best_value) {
+        best_value = bottom_value;
+        next_row = current_row + 1;
+      }
+    }
+    current_row = next_row;
+    path.push_back(current_row);
+  }
+  return path;
 }
 
 OceanNavigation::OceanNavigation(const std::string& file_path,
